@@ -1,11 +1,11 @@
 package com.spring.tradexidentityservice.Models;
 
+import com.spring.tradexidentityservice.Enum.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 
-import javax.management.relation.Role;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
