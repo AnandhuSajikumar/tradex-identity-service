@@ -2,14 +2,17 @@ package com.spring.tradexidentityservice.Service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class JwtService {
@@ -19,22 +22,37 @@ public class JwtService {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(Long userId, String username, List<String> role) {
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userId);
+        claims.put("role", role);
+
         return Jwts.builder()
-                .subject(userDetails.getUsername())
+                .claims(claims)
+                .subject(username)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
-                .signWith(getSigningKey(), Jwts.SIG.HS256)
+                .signWith(getSigningKey())
                 .compact();
     }
+
+
+    public Long extractUserId(String token){
+        return extractAllClaims(token).get("userId",Long.class);
+    }
+
+    public List<String> extractRoles(String token) {
+        return extractAllClaims(token).get("roles", List.class);
+    }
+
 
     public String extractUsername(String token) {
         return extractAllClaims(token).getSubject();
 
     }
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        return extractUsername(token).equals(userDetails.getUsername())
-                && !isExpired(token);
+    public boolean isTokenValid(String token) {
+        return !isExpired(token);
     }
 
     public boolean isExpired(String token) {
