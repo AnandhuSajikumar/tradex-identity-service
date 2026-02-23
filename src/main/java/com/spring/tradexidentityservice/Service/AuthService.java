@@ -22,7 +22,6 @@ public class AuthService {
     private final UserDetailsService userDetailsService;
     private final JwtService jwtService;
 
-
     @Transactional
     public void register(RegisterRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
@@ -34,17 +33,21 @@ public class AuthService {
                 request.getLastname(),
                 request.getEmail(),
                 passwordEncoder.encode(request.getPassword()),
-                Role.USER
-        );
+                Role.USER);
 
         userRepository.save(user);
     }
 
-    public String authenticate(String email, String password){
+    public String authenticate(String email, String password) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-        return jwtService.generateToken(userDetails);
+
+        Long userId = ((com.spring.tradexidentityservice.DTO.UserPrincipal) userDetails).getUserId();
+        java.util.List<String> roles = userDetails.getAuthorities().stream()
+                .map(org.springframework.security.core.GrantedAuthority::getAuthority)
+                .toList();
+
+        return jwtService.generateToken(userId, userDetails.getUsername(), roles);
     }
 }
-

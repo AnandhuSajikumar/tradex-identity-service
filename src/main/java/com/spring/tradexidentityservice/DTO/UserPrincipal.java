@@ -13,26 +13,26 @@ public class UserPrincipal implements UserDetails {
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public UserPrincipal(Long userId, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+    public UserPrincipal(Long userId, String email, String password,
+            Collection<? extends GrantedAuthority> authorities) {
         this.userId = userId;
         this.email = email;
         this.password = password;
         this.authorities = authorities;
     }
 
-    public long getId(){
+    public long getId() {
         return userId;
     }
 
-
     @Override
     public String getUsername() {
-        return getUsername();
+        return email;
     }
 
     @Override
-    public String getPassword(){
-        return getPassword();
+    public String getPassword() {
+        return password;
     }
 
     @Override
