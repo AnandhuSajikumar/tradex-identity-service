@@ -23,7 +23,7 @@ public class AuthConfig {
     private final UserRepository userRepository;
 
     @Bean
-    public UserDetailsService userDetailsService(){
+    public UserDetailsService userDetailsService() {
         return username -> {
             User user = userRepository.findByEmail(username)
                     .orElseThrow(() -> new IllegalStateException("User not found"));
@@ -33,15 +33,13 @@ public class AuthConfig {
                     user.getEmail(),
                     user.getPassword(),
                     List.of(
-                            new SimpleGrantedAuthority("ROLE_" + user.getRole().name())
-                    )
-            );
+                            new SimpleGrantedAuthority("ROLE_" + user.getRole().name())));
 
         };
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider(){
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService());
 
         authProvider.setPasswordEncoder(passwordEncoder());
@@ -55,11 +53,8 @@ public class AuthConfig {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-
-
 
 }
