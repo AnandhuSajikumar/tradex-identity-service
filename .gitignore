@@ -34,3 +34,5 @@ build/
 
 ### Log Files ###
 *.log
+build.txt
+build2.txt
