@@ -22,11 +22,11 @@ public class JwtService {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    public String generateToken(Long userId, String username, List<String> role) {
+    public String generateToken(Long userId, String username, List<String> roles) {
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userId);
-        claims.put("role", role);
+        claims.put("roles", roles);
 
         return Jwts.builder()
                 .claims(claims)
@@ -37,20 +37,19 @@ public class JwtService {
                 .compact();
     }
 
-
-    public Long extractUserId(String token){
-        return extractAllClaims(token).get("userId",Long.class);
+    public Long extractUserId(String token) {
+        return extractAllClaims(token).get("userId", Long.class);
     }
 
     public List<String> extractRoles(String token) {
         return extractAllClaims(token).get("roles", List.class);
     }
 
-
     public String extractUsername(String token) {
         return extractAllClaims(token).getSubject();
 
     }
+
     public boolean isTokenValid(String token) {
         return !isExpired(token);
     }
@@ -59,7 +58,7 @@ public class JwtService {
         return extractAllClaims(token).getExpiration().before(new Date());
     }
 
-    private Claims extractAllClaims(String token){
+    private Claims extractAllClaims(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()
@@ -67,7 +66,7 @@ public class JwtService {
                 .getPayload();
     }
 
-    private SecretKey getSigningKey(){
+    private SecretKey getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
