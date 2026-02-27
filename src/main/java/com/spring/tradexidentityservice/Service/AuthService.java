@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ public class AuthService {
     private final JwtService jwtService;
 
     @Transactional
-    public void register(RegisterRequest request) {
+    public String register(RegisterRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new IllegalStateException("Email already exists");
         }
@@ -35,7 +36,10 @@ public class AuthService {
                 passwordEncoder.encode(request.getPassword()),
                 Role.USER);
 
-        userRepository.save(user);
+        user = userRepository.save(user);
+
+        List<String> roles = List.of("ROLE_" + Role.USER.name());
+        return jwtService.generateToken(user.getId(), user.getEmail(), roles);
     }
 
     public String authenticate(String email, String password) {

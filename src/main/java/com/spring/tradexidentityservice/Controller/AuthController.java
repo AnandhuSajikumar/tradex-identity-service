@@ -19,12 +19,12 @@ public class AuthController {
 
     @PostMapping("/register")
     public AuthResponse register(@RequestBody RegisterRequest request) {
-        authService.register(request);
-        return new AuthResponse("User registered successfully");
+        String token = authService.register(request);
+        return new AuthResponse(token);
     }
 
     @PostMapping("/login")
-    public AuthResponse login(@RequestBody LoginRequest request){
+    public AuthResponse login(@RequestBody LoginRequest request) {
         String token = authService.authenticate(request.getEmail(), request.getPassword());
 
         return new AuthResponse(token);
