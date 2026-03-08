@@ -63,6 +63,7 @@ public class User {
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Credit amount must be positive");
         }
+        this.walletBalance = this.walletBalance.add(amount);
     }
 
     public static User register(
